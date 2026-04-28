@@ -13,3 +13,45 @@
 - Started Vite dev server and confirmed `http://localhost:5173/` returns HTTP 200.
 - Added `.gitignore` for generated dependencies, build output and local Vite logs.
 - Added `启动说明.md` and `start-dev.ps1` for project startup instructions and one-command local launch.
+- Reviewed Binhao reference site and redesigned `src/App.vue` into a more mature manufacturer homepage structure.
+- Replaced overly large detail image imports with smaller existing images to keep the build lighter.
+- Ran `npm run build` successfully after the redesign and confirmed local preview returns HTTP 200.
+- Added Binhao-style dynamic effects in `src/App.vue` and `src/style.css`: hero carousel, scroll reveal, metric count-up, product hover overlay, service hover states, and smooth transitions.
+- Ran `npm run build` successfully after adding animations and confirmed local preview still returns HTTP 200.
+- Added click-to-expand navigation panels under desktop nav labels and mobile accordion submenus.
+- Updated image imports from removed JPG files to the current PNG image set and verified `npm run build` passes.
+- Changed desktop navigation expansion from click-triggered to hover-triggered; mobile remains click accordion because touch devices do not have hover.
+- Added `docs/METU官网需求文档与首页布局方案.md` for requirements, page structure, and homepage layout planning.
+- Added `docs/METU官网项目架构与迭代计划.md` for architecture, maintenance rules, and future iteration roadmap.
+- Renamed the planning documents to Chinese filenames and translated remaining English section labels where practical.
+- Organized new image assets into `src/assets/` with English filenames and updated `src/App.vue` imports.
+- Updated the requirements and architecture documents with the image directory structure and page mapping.
+- Rebuilt the homepage hero as a 5-image fullscreen carousel using the factory environment image first and four machine images after it.
+- Added carousel jump buttons and delayed two-line Chinese hero copy on every slide transition.
+- Updated planning documents with the new fullscreen carousel requirements.
+- Refined homepage carousel: replaced large slide buttons with dots, changed images to full-view contain mode with blurred fill, reduced hero copy size, and added direction-aware slide transitions.
+- Added PC luggage category page at `/PC-Luggage`.
+- Added MT1007 product detail page at `/PC-Luggage/mt1007-pc-luggage.html`.
+- Kept the same METU header, logo, navigation and hover mega menu across home, category and detail views.
+- Updated planning documents with product page URL and maintenance rules.
+- Added `docs/METU官网开发工作流.md` to document which skills to use for different development situations, plus workflows for products, factory images, carousel edits, routing and verification.
+- Added a requirements pool and version planning mechanism directly into `docs/METU官网需求文档与首页布局方案.md`.
+- Added pending requirement R013 for Binhao-style PC category and MT1007 product detail page optimization; documented scope, structure, non-goals, files and acceptance criteria.
+- Moved new display images from `图片/` into `src/assets/products/mt1007/` as `mt1007-display-01.png` and `mt1007-display-02.png`.
+- Added the new display images to the MT1007 detail gallery and updated image mapping in the docs.
+- Updated `/PC-Luggage` to show only `mt1007-display-01.png` above the product list; removed display images from the MT1007 detail gallery.
+- Added pending requirement R014 documenting the differences between Binhao's PC category page and METU's `/PC-Luggage`, plus the desired layout and interaction plan.
+- Implemented a preview version of R014 on `/PC-Luggage` and verified build plus category/detail routes return HTTP 200.
+- Changed the `/PC-Luggage` MT1007 product card cover image to the trolley handle image.
+- Added clickable thumbnails on the MT1007 product detail page to switch the main product image with a short transition.
+- Refined homepage hero copy: reduced first-line size for one-line display and smoothed the delayed text transition.
+- Removed repeated hero copy remounting and blur transition during carousel changes to eliminate the visible stutter.
+- Reworked hero copy delay to use stable DOM with class-based opacity/transform transitions, so text delays on every slide without remount stutter.
+- Increased homepage hero copy delay slightly for a calmer reveal after each slide change.
+- Staggered the homepage hero copy reveal so the second line fades in slightly after the first line.
+- Added pending requirement R015 for a Binhao-inspired About Us company profile page, including `/about#company` anchor behavior, factory environment image usage, layout modules and acceptance criteria.
+- Implemented a preview version of R015: added `/about`, `/about#company`, About anchor navigation, factory-environment company profile visuals, manufacturing experience modules, values section and inquiry CTA.
+- Refined `/about` again to better match Binhao's About structure: company profile, corporate culture, development history, honor placeholder, and a black-white footer with full navigation, contact placeholders, social icons and WeChat QR hover.
+- Reduced `/about` typography scale and changed About headings to a more formal sans-serif style instead of the decorative display font.
+- Rebuilt `/about` sections to match the four local Binhao reference screenshots: company profile with right image and metric row, full-background culture cards, ruler-style history switcher, and honor certificate-stage layout.
+- Reworked the `/about` footer to match the provided Binhao footer screenshot: left brand/contact/social block, right 2x3 link groups with all sub-links visible, and placeholder Baidu links for missing directories.
