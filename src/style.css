@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color: #0b0b0c;
+  background: #f4f4f1;
+  font-synthesis: none;
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background:
+    linear-gradient(90deg, rgba(11, 11, 12, 0.04) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(11, 11, 12, 0.04) 1px, transparent 1px),
+    #f4f4f1;
+  background-size: 72px 72px;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: #0b0b0c;
+  color: #f4f4f1;
+}
+
+.metal-line {
+  background: linear-gradient(90deg, transparent, rgba(174, 180, 186, 0.75), transparent);
+}
+
+.surface-dark {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 38%),
+    radial-gradient(circle at 50% 0%, rgba(185, 144, 86, 0.12), transparent 34%),
+    #0b0b0c;
+}
+
+.image-sheen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 0%, rgba(255, 255, 255, 0.18) 46%, transparent 54%);
+  transform: translateX(-110%);
+  transition: transform 700ms ease;
+}
+
+.group:hover .image-sheen::after {
+  transform: translateX(110%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
