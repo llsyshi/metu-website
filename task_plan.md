@@ -26,6 +26,7 @@ Build the first static front-end version of the METU OEM/ODM luggage factory web
 | 17. About page Binhao-style refinement | complete | Reworked `/about` into company profile, corporate culture, development history, honor placeholder, and a black-white footer with navigation, product links, contact placeholders, social icons, and WeChat QR hover. |
 | 18. About page screenshot-matched modules | complete | Rebuilt About company profile, culture, history, and honor sections to follow the four local Binhao reference screenshots in `图片/`, while using METU assets and placeholder data. |
 | 19. About footer screenshot match | complete | Rebuilt the bottom footer to match the provided Binhao screenshot with a left brand/contact/social block and right 2x3 expanded link groups. |
+| 20. About fixed footer reveal | complete | Converted the About footer into a desktop fixed reveal effect so the honor section scrolls upward and exposes the black footer from behind, while mobile keeps a normal flow footer. |
 
 ## Decisions
 - Use one polished static landing page with anchor navigation for the first version, matching the request to build the homepage while including all listed content areas.

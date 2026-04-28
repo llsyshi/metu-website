@@ -55,3 +55,4 @@
 - Reduced `/about` typography scale and changed About headings to a more formal sans-serif style instead of the decorative display font.
 - Rebuilt `/about` sections to match the four local Binhao reference screenshots: company profile with right image and metric row, full-background culture cards, ruler-style history switcher, and honor certificate-stage layout.
 - Reworked the `/about` footer to match the provided Binhao footer screenshot: left brand/contact/social block, right 2x3 link groups with all sub-links visible, and placeholder Baidu links for missing directories.
+- Changed the `/about` black footer from a normal page section into a desktop fixed footer reveal: after the honor section, content scrolls upward and exposes the fixed black footer from behind; mobile remains normal flow.

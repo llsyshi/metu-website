@@ -36,6 +36,10 @@ let megaCloseTimer
 let heroTextTimer
 let popstateHandler
 let aboutSectionObserver
+let smoothWheelFrame
+let smoothWheelTarget = 0
+let smoothWheelHandler
+let smoothWheelEnabled = false
 
 const copy = {
   en: {
@@ -656,15 +660,65 @@ const parseRoute = () => {
   return { name: 'home' }
 }
 
+const clampScroll = (value) => {
+  const maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 0)
+  return Math.min(Math.max(value, 0), maxScroll)
+}
+
+const easeOutQuart = (progress) => 1 - Math.pow(1 - progress, 4)
+
+const animateScrollTo = (targetY, duration = 1250) => {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    window.scrollTo(0, targetY)
+    return
+  }
+
+  if (smoothWheelFrame) {
+    cancelAnimationFrame(smoothWheelFrame)
+    smoothWheelFrame = null
+  }
+
+  const startY = window.scrollY
+  const distance = clampScroll(targetY) - startY
+  if (Math.abs(distance) < 1) return
+
+  const start = performance.now()
+  const tick = (time) => {
+    const progress = Math.min((time - start) / duration, 1)
+    window.scrollTo(0, startY + distance * easeOutQuart(progress))
+    if (progress < 1) {
+      smoothWheelFrame = requestAnimationFrame(tick)
+      return
+    }
+    smoothWheelFrame = null
+    smoothWheelTarget = window.scrollY
+  }
+
+  smoothWheelFrame = requestAnimationFrame(tick)
+}
+
 const scrollToHash = (hash, behavior = 'smooth') => {
   if (!hash) {
-    window.scrollTo({ top: 0, behavior })
+    if (behavior === 'auto') {
+      window.scrollTo({ top: 0, behavior })
+    } else {
+      animateScrollTo(0, route.value.name === 'about' ? 1350 : 900)
+    }
     return
   }
 
   nextTick(() => {
     requestAnimationFrame(() => {
-      document.querySelector(hash)?.scrollIntoView({ behavior, block: 'start' })
+      const target = document.querySelector(hash)
+      if (!target) return
+      if (behavior === 'auto') {
+        target.scrollIntoView({ behavior, block: 'start' })
+        smoothWheelTarget = window.scrollY
+        return
+      }
+
+      const top = target.getBoundingClientRect().top + window.scrollY
+      animateScrollTo(top, route.value.name === 'about' ? 1350 : 900)
     })
   })
 }
@@ -729,6 +783,61 @@ const handleFooterLink = (event, href) => {
   event.preventDefault()
   const [path, hash] = href.split('#')
   navigateTo(path || '/', hash ? `#${hash}` : '')
+}
+
+const shouldUseSmoothWheel = () =>
+  route.value.name === 'about' &&
+  window.matchMedia('(min-width: 768px) and (pointer: fine)').matches &&
+  !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+const runSmoothWheel = () => {
+  const current = window.scrollY
+  const distance = smoothWheelTarget - current
+
+  if (Math.abs(distance) < 0.6) {
+    window.scrollTo(0, smoothWheelTarget)
+    smoothWheelFrame = null
+    return
+  }
+
+  window.scrollTo(0, current + distance * 0.105)
+  smoothWheelFrame = requestAnimationFrame(runSmoothWheel)
+}
+
+const handleSmoothWheel = (event) => {
+  if (!shouldUseSmoothWheel() || event.ctrlKey || event.metaKey || event.shiftKey) return
+  if (event.target?.closest?.('input, textarea, select, [data-native-scroll], .history-ruler')) return
+
+  event.preventDefault()
+  const delta = Math.abs(event.deltaY) < 10 ? event.deltaY * 18 : event.deltaY
+  smoothWheelTarget = clampScroll(smoothWheelTarget + delta * 0.82)
+
+  if (!smoothWheelFrame) {
+    smoothWheelFrame = requestAnimationFrame(runSmoothWheel)
+  }
+}
+
+const syncSmoothWheel = () => {
+  if (!smoothWheelHandler) {
+    smoothWheelHandler = handleSmoothWheel
+  }
+
+  const shouldEnable = shouldUseSmoothWheel()
+  if (shouldEnable && !smoothWheelEnabled) {
+    smoothWheelTarget = window.scrollY
+    window.addEventListener('wheel', smoothWheelHandler, { passive: false })
+    smoothWheelEnabled = true
+    return
+  }
+
+  if (!shouldEnable && smoothWheelEnabled) {
+    window.removeEventListener('wheel', smoothWheelHandler)
+    smoothWheelEnabled = false
+    if (smoothWheelFrame) {
+      cancelAnimationFrame(smoothWheelFrame)
+      smoothWheelFrame = null
+    }
+  }
 }
 
 const setProductImage = (index) => {
@@ -1329,8 +1438,8 @@ onBeforeUnmount(() => {
       </section>
       </template>
 
-      <section v-else-if="route.name === 'about'" class="about-page bg-mist">
-        <section class="relative overflow-hidden bg-carbon px-4 pb-20 pt-36 text-white md:pb-28 md:pt-44">
+      <section v-else-if="route.name === 'about'" class="about-page relative bg-transparent">
+        <section class="relative z-10 overflow-hidden bg-carbon px-4 pb-20 pt-36 text-white md:pb-28 md:pt-44">
           <div class="absolute inset-0">
             <img :src="factoryEnvironmentImage" alt="METU factory environment" class="h-full w-full object-cover opacity-28" />
             <div class="absolute inset-0 bg-gradient-to-r from-carbon via-carbon/88 to-carbon/44"></div>
@@ -1363,7 +1472,7 @@ onBeforeUnmount(() => {
           </div>
         </nav>
 
-        <section id="company" data-about-section class="about-company-section scroll-mt-36 bg-white px-4 py-16 md:py-24">
+        <section id="company" data-about-section class="about-company-section relative z-10 scroll-mt-36 bg-white px-4 py-16 md:py-24">
           <div class="mx-auto max-w-7xl">
             <div class="grid gap-12 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
               <div v-reveal class="pt-2">
@@ -1390,7 +1499,7 @@ onBeforeUnmount(() => {
           </div>
         </section>
 
-        <section id="culture" data-about-section class="relative scroll-mt-36 overflow-hidden px-4 py-16 text-white md:min-h-[760px] md:py-24">
+        <section id="culture" data-about-section class="relative z-10 scroll-mt-36 overflow-hidden px-4 py-16 text-white md:min-h-[760px] md:py-24">
           <div class="absolute inset-0">
             <img :src="machineImage4" alt="METU production background" class="h-full w-full object-cover" />
             <div class="absolute inset-0 bg-gradient-to-b from-black/18 via-black/8 to-black/36"></div>
@@ -1421,7 +1530,7 @@ onBeforeUnmount(() => {
           </div>
         </section>
 
-        <section id="history" data-about-section class="history-section relative scroll-mt-36 overflow-hidden bg-white px-4 py-16 md:py-24">
+        <section id="history" data-about-section class="history-section relative z-10 scroll-mt-36 overflow-hidden bg-white px-4 py-16 md:py-24">
           <div class="mx-auto max-w-7xl">
             <div v-reveal class="max-w-4xl">
               <p class="inline-block bg-[#2f63c7] px-3 py-1 text-3xl font-semibold leading-none text-white md:text-4xl">{{ t.aboutPage.history.eyebrow }}</p>
@@ -1473,7 +1582,7 @@ onBeforeUnmount(() => {
           </div>
         </section>
 
-        <section id="honor" data-about-section class="honor-section relative scroll-mt-36 overflow-hidden px-4 py-16 text-white md:min-h-[760px] md:py-24">
+        <section id="honor" data-about-section class="honor-section relative z-20 scroll-mt-36 overflow-hidden px-4 py-16 text-white md:min-h-[760px] md:py-24">
           <div class="absolute inset-0 bg-gradient-to-br from-[#5f7898] via-[#8d9cad] to-[#d3c6b2]"></div>
           <div class="absolute inset-0 bg-white/10"></div>
           <div class="relative mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
@@ -1507,8 +1616,10 @@ onBeforeUnmount(() => {
           </div>
         </section>
 
-        <footer id="footer" data-about-section class="scroll-mt-36 bg-[#1b1b1b] px-4 pb-8 pt-16 text-white md:pt-24">
-          <div class="mx-auto grid min-h-[620px] max-w-7xl gap-14 lg:grid-cols-[0.9fr_1.85fr]">
+        <div id="footer" data-about-section class="about-footer-reveal-spacer relative scroll-mt-36 md:block" aria-hidden="true"></div>
+
+        <footer class="about-fixed-footer z-0 bg-[#1b1b1b] px-4 pb-8 pt-16 text-white md:fixed md:inset-x-0 md:bottom-0 md:h-[720px] md:overflow-hidden md:pt-20" aria-label="METU footer">
+          <div class="mx-auto grid max-w-7xl gap-14 lg:grid-cols-[0.9fr_1.85fr] md:min-h-[620px]">
             <div v-reveal class="flex flex-col">
               <a href="/" class="inline-flex items-center gap-4" @click="handleInternalLink($event, '/')">
                 <span class="grid h-14 w-14 place-items-center bg-white p-2">
