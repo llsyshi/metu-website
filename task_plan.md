@@ -27,6 +27,11 @@ Build the first static front-end version of the METU OEM/ODM luggage factory web
 | 18. About page screenshot-matched modules | complete | Rebuilt About company profile, culture, history, and honor sections to follow the four local Binhao reference screenshots in `图片/`, while using METU assets and placeholder data. |
 | 19. About footer screenshot match | complete | Rebuilt the bottom footer to match the provided Binhao screenshot with a left brand/contact/social block and right 2x3 expanded link groups. |
 | 20. About fixed footer reveal | complete | Converted the About footer into a desktop fixed reveal effect so the honor section scrolls upward and exposes the black footer from behind, while mobile keeps a normal flow footer. |
+| 21. Structure refactor phase 1 | complete | Extracted page copy, product data, route constants, QR cells, and image-backed data arrays from `src/App.vue` into `src/data/siteData.js`; kept rendering behavior unchanged. |
+| 22. Component refactor phase 1 | complete | Extracted the shared site header into `src/components/SiteHeader.vue` and the homepage hero carousel into `src/components/HomeHero.vue`; state and routing remain in `src/App.vue`. |
+| 23. Route component refactor phase 1 | complete | Extracted `/PC-Luggage` into `src/components/PcCategoryPage.vue` and `/PC-Luggage/mt1007-pc-luggage.html` into `src/components/ProductDetailPage.vue`; kept route selection in `src/App.vue`. |
+| 24. About route component refactor | complete | Extracted `/about` into `src/components/AboutPage.vue`; kept active anchor/history state and routing callbacks in `src/App.vue`. |
+| 25. App shell cleanup | complete | Extracted site navigation, lifecycle wiring, and root state composition into composables; reduced `src/App.vue` to a compact page shell. |
 
 ## Decisions
 - Use one polished static landing page with anchor navigation for the first version, matching the request to build the homepage while including all listed content areas.
@@ -41,3 +46,4 @@ Build the first static front-end version of the METU OEM/ODM luggage factory web
 | `npm install` EPERM in npm cache | Ran in workspace sandbox | Re-ran with approved escalation for npm cache access. |
 | `npm install` dependency resolution failed because `postcss` version was invalid | Used `^8.5.49` by mistake | Changed to stable `^8.4.49`. |
 | `git status` failed with dubious ownership | Ran plain `git status --short` from sandbox user | Used one-off `git -c safe.directory=E:/desktop/metu-website status --short` without changing global Git config. |
+| Vite dev server failed with `spawn EPERM` inside sandbox | Ran `npm run dev -- --host 127.0.0.1 --port 5174` | Started the dev server outside the sandbox after approval and verified routes. |

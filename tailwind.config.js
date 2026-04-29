@@ -4,8 +4,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Be Vietnam Pro"', '"Noto Sans SC"', 'sans-serif'],
-        display: ['"Cormorant Garamond"', '"Noto Serif SC"', 'serif'],
+        sans: ['"Microsoft YaHei"', '"微软雅黑"', 'Arial', 'sans-serif'],
+        display: ['"Microsoft YaHei"', '"微软雅黑"', 'Arial', 'sans-serif'],
       },
       colors: {
         carbon: '#0b0b0c',

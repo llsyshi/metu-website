@@ -56,3 +56,42 @@
 - Rebuilt `/about` sections to match the four local Binhao reference screenshots: company profile with right image and metric row, full-background culture cards, ruler-style history switcher, and honor certificate-stage layout.
 - Reworked the `/about` footer to match the provided Binhao footer screenshot: left brand/contact/social block, right 2x3 link groups with all sub-links visible, and placeholder Baidu links for missing directories.
 - Changed the `/about` black footer from a normal page section into a desktop fixed footer reveal: after the honor section, content scrolls upward and exposes the fixed black footer from behind; mobile remains normal flow.
+
+## 2026-04-29
+- Started structure cleanup without adding new page content.
+- Extracted site copy, product data, route constants, QR cells, carousel/gallery data, and related asset imports into `src/data/siteData.js`.
+- Rewired `src/App.vue` to import shared data while keeping the existing template and interaction logic in place.
+- Ran `npm run build` successfully after the refactor.
+- Extracted the global header/navigation/mega-menu markup into `src/components/SiteHeader.vue`.
+- Fixed a template replacement issue caused by stale string offsets during the header extraction.
+- Extracted the homepage full-screen carousel section into `src/components/HomeHero.vue`.
+- Ran `npm run build` successfully after the component extraction.
+- Attempted to start the Vite dev server inside the sandbox; it failed with an esbuild `spawn EPERM`, then started the dev server with approval at `http://127.0.0.1:5174/`.
+- Confirmed the local dev server returns HTTP 200.
+- Extracted the `/PC-Luggage` route template into `src/components/PcCategoryPage.vue`.
+- Extracted the `/PC-Luggage/mt1007-pc-luggage.html` route template into `src/components/ProductDetailPage.vue`.
+- Repaired a stale-offset replacement issue while moving the product route blocks out of `App.vue`.
+- Replaced moved route-page `v-reveal` usages with `reveal-ready` classes so the existing observer in `App.vue` can still animate those blocks.
+- Ran `npm run build` successfully after route component extraction.
+- Confirmed `http://127.0.0.1:5174/`, `/PC-Luggage`, and `/PC-Luggage/mt1007-pc-luggage.html` all return HTTP 200.
+- Extracted the `/about` route template into `src/components/AboutPage.vue`.
+- Passed About page state and assets into the component through props, while keeping active section/history state and navigation callbacks in `App.vue`.
+- Replaced moved About page `v-reveal` usages with `reveal-ready` classes so the existing observer can still animate them.
+- Ran `npm run build` successfully after About route extraction.
+- Confirmed `http://127.0.0.1:5174/about`, `/`, `/PC-Luggage`, and `/PC-Luggage/mt1007-pc-luggage.html` all return HTTP 200.
+- Continued `App.vue` cleanup by extracting route parsing, hash scrolling, internal link handlers, product image state, and About anchor/history state into `src/composables/useSiteNavigation.js`.
+- Moved header scroll listener cleanup into `src/composables/useHeaderState.js`, hero carousel lifecycle into `src/composables/useHeroCarousel.js`, and page observer lifecycle into `src/composables/usePageObservers.js`.
+- Added `src/composables/useSiteApp.js` to compose global site data, header state, hero state, routing, and page observers in one place.
+- Reduced `src/App.vue` from 301 lines at the start of this cleanup pass to 91 lines.
+- Removed the unused `placeholderLink` export from `src/data/siteData.js` and removed the unused smooth-scroll target variable from navigation code.
+- Ran `npm run build` successfully after the app-shell cleanup.
+- Started Vite dev server at `http://127.0.0.1:5174/` after sandbox `spawn EPERM` blocked direct startup.
+- Confirmed `http://127.0.0.1:5174/`, `/about`, `/PC-Luggage`, and `/PC-Luggage/mt1007-pc-luggage.html` all return HTTP 200 after the cleanup.
+- Investigated display regression after app-shell cleanup with Edge headless screenshots.
+- Identified root cause: the product detail route has a white first viewport, but the shared header still used the transparent white-on-image style at the top of the page.
+- Added route-aware solid header state for the product detail route via `isHeaderSolid` in `src/composables/useSiteApp.js`.
+- Changed route initialization in `src/composables/useSiteNavigation.js` to parse the current URL during setup, avoiding a first render that briefly assumes the home route on direct subpage loads.
+- Rebuilt successfully and verified the product detail screenshot now shows a readable solid header.
+- Fixed homepage metrics showing `0` by initializing metrics from copy targets and syncing them through `usePageObservers`, so the business facts render as `25+`, `100+`, `5`, and `6` immediately instead of waiting on IntersectionObserver.
+- Adjusted the desktop header mega-menu to use an opaque dark background and higher-contrast white text/link styling so hover-expanded menu content stays readable over bright hero imagery.
+- Fixed the OEM/ODM service section blank right side by removing `reveal-ready` from the six service step cards in `src/components/home/HomeCustom.vue`; these core cards now render visibly without depending on IntersectionObserver.
